@@ -2,7 +2,7 @@ require "csv"
 
 class Exporter
   def self.export_to_csv(rating_values, filename: "rating_history")
-    CSV.open("#{filename}.csv", "w") do |csv|
+    CSV.open("csv/#{filename}.csv", "w") do |csv|
       columns = %w[date place rating]
       csv << columns
 
@@ -18,7 +18,7 @@ class Exporter
       by_date[rating_value.date][rating_value.place] = rating_value.rating
     end
 
-    CSV.open("#{filename}.csv", "w") do |csv|
+    CSV.open("csv/#{filename}.csv", "w") do |csv|
       places = Set.new(rating_values.map(&:place))
       columns = ["date", places.to_a].flatten
       csv << columns
