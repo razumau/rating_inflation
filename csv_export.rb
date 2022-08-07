@@ -1,15 +1,30 @@
 require "csv"
 
 class Exporter
-  COLUMNS = %w[date place rating]
-
-  def self.export_to_csv(rating_values, places_to_export: nil, filename: "rating_history")
+  def self.export_to_csv(rating_values, filename: "rating_history")
     CSV.open("#{filename}.csv", "w") do |csv|
-      csv << COLUMNS
+      columns = %w[date place rating]
+      csv << columns
+
       rating_values.each do |rating_value|
-        if !places_to_export.nil? && places_to_export.include?(rating_value.place)
-          csv << [rating_value.date, rating_value.place, rating_value.rating]
-        end
+        csv << [rating_value.date, rating_value.place, rating_value.rating]
+      end
+    end
+  end
+
+  def self.export_for_datawrapper(rating_values, filename: "datawrapper")
+    by_date = Hash.new { |hash, key| hash[key] = {} }
+    rating_values.each do |rating_value|
+      by_date[rating_value.date][rating_value.place] = rating_value.rating
+    end
+
+    CSV.open("#{filename}.csv", "w") do |csv|
+      places = Set.new(rating_values.map(&:place))
+      columns = ["date", places.to_a].flatten
+      csv << columns
+
+      by_date.each do |date, values|
+        csv << [date, values.values].flatten
       end
     end
   end

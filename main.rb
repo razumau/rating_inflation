@@ -6,6 +6,8 @@ require_relative './releases_list'
 
 RatingValue = Struct.new(:date, :place, :rating)
 
+places = [1, 10, 20, 50, 100]
+
 all_releases = ReleasesList.list
 
 all_releases.each do |release|
@@ -13,9 +15,8 @@ all_releases.each do |release|
 end
 
 parsed = all_releases.map do |release|
-  Parser.new(release).parse_release
+  Parser.new(release, places).parse_release
 end.flatten(1)
 
 Exporter.export_to_csv(parsed)
-
-Exporter.export_to_csv(parsed, places_to_export: [1, 10, 20, 50, 100], filename: "filtered")
+Exporter.export_for_datawrapper(parsed)
